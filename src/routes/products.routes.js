@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createProductValidator } from "../validators/product.validator.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
-import {createProduct, listAllProducts} from "../controller/product.controller.js"
+import { createProduct, listAllProducts, unlistProduct, listProduct, listAllProductsToSeller } from "../controller/product.controller.js"
 import multer from "multer";
 
 
@@ -37,15 +37,42 @@ router.post("/", authenticate, (req, res, next)=>{
     next()
 }, createProductValidator, createProduct)
 
-
-
+/**
+ * @method GET
+ * @route /api/product
+ * @description Read all the published products from the DB
+ * @access user
+ */
 
 
 router.get("/", authenticate, listAllProducts)
 
 
+/**
+ * @method GET
+ * @route /api/product/seller
+ * @description Read all the products from the DB
+ * @access seller
+ */
+router.get("/seller", authenticate, authenticateSeller, listAllProductsToSeller)
 
 
+/**
+ * @method PATCH
+ * @route /api/products/unlist/:id
+ * @description Unlist a product by its ID
+ * @access seller
+ */
+router.patch("/unlist/:id", authenticate, authenticateSeller, unlistProductValidator, unlistProduct)
+
+
+/**
+ * @method PATCH
+ * @route /api/products/unlist/:id
+ * @description list a product by its ID
+ * @access seller
+ */
+router.patch("/unlist/:id", authenticate, authenticateSeller, listProductValidator, listProduct)
 
 
 export default router
